@@ -1,0 +1,87 @@
+package chuck_norris;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class ChuckNorrisEncoding {
+	public static void main(String[] args) {
+		try(BufferedReader in = new BufferedReader(new InputStreamReader(System.in))){
+			String input = input(in);
+			String binaryForm = stringToBinary(input);
+			System.out.println("Binary from: " + binaryForm);
+			System.out.println("Chuck Norris encoded form: ");
+			System.out.println(chuckNorrisEncodeFunction(binaryForm));
+			
+			
+		}catch(IOException e) {
+			System.out.println(":( \n\n");
+			e.printStackTrace();
+		}
+	}
+	
+	
+	private static boolean isASCII(String s) {
+		return Charset.forName("US-ASCII").newEncoder().canEncode(s);
+	}
+	
+	
+	private static String input(BufferedReader in)throws IOException{
+		System.out.println("Eneter desired word: \n  >>");
+	    String input = in.readLine();
+	    while(!isASCII(input)) {
+	    	System.err.println("Please use ASCII characters!\n  >>");
+	        input = in.readLine();
+	    }
+	    return input;
+	}
+	
+	private static String toBinary(char c) {
+		return Integer.toBinaryString(c);
+	}
+	
+	private static String stringToBinary(String s) {
+		StringBuilder sb = new StringBuilder();
+		for(int i=0; i < s.length(); i++) {
+			sb.append(toBinary(s.charAt(i)));
+		}
+		return sb.toString();
+	}
+	
+	private static String chuckNorrisEncodeFunction(String strToEncode) {
+		String binaryForm = stringToBinary(strToEncode);
+		StringBuilder sb = new StringBuilder();
+		
+		
+		boolean changeOccurred = false;
+		char predChar = '0';
+		char currChar;
+		int count = 0;//broj ponavljanja karaktera 0 ili 1
+		
+		for(int i=0; i < binaryForm.length(); i++) {
+			currChar = binaryForm.charAt(i);
+			if(count == 0) {
+				if(currChar == '0') {
+					sb.append("00 "); //0
+				}else {
+					sb.append("0 "); //1
+				}
+				predChar = currChar;
+				count++;
+				
+			}else if(predChar == currChar && count > 0){
+				count++;
+			}else {
+				String toAdd = "";
+				IntStream.of(count).collect(Collectors.joining(Character.NON_SPACING_MARK, predChar, Character.NON_SPACING_MARK));
+				sb.append(toAdd);
+				predChar = currChar;
+				count = 0;
+			}
+		}
+		return sb.toString();
+	}
+}

@@ -1,0 +1,28 @@
+package defibrilators;
+
+import defibrilators.utils.*;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.Buffer;
+import java.util.ArrayList;
+
+public class Main{
+    public static void main(String[] args) {
+        try(BufferedReader in = new BufferedReader(new InputStreamReader(System.in))){
+            String filePath = Utils.input(in, "Enter file path", "data.json");
+            String data = Utils.loadFromFile(filePath);
+            
+            ArrayList<Defibrilator> defebs = Utils.parse(data);
+            
+            defebs.forEach(System.out::println); 
+           // User us = Utils.extractUserData(data);
+           //System.out.println(us);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+}
+

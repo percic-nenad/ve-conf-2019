@@ -1,0 +1,53 @@
+package chuck_norris;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+
+public class ChuckNorrisEncoding {
+	public static void main(String[] args) {
+		try(BufferedReader in = new BufferedReader(new InputStreamReader(System.in))){
+			String input = input(in);
+			System.out.println("Binary from: " + stringToBinary(input));
+			
+			
+		}catch(IOException e) {
+			System.out.println(":( \n\n");
+			e.printStackTrace();
+		}
+	}
+	
+	
+	private static boolean isASCII(String s) {
+		return Charset.forName("US-ASCII").newEncoder().canEncode(s);
+	}
+	
+	
+	private static String input(BufferedReader in)throws IOException{
+		System.out.println("Eneter desired word: \n  >>");
+	    String input = in.readLine();
+	    while(!isASCII(input)) {
+	    	System.err.println("Please use ASCII characters!\n  >>");
+	        input = in.readLine();
+	    }
+	    return input;
+	}
+	
+	private static String toBinary(char c) {
+		return Integer.toBinaryString(c);
+	}
+	
+	private static String stringToBinary(String s) {
+		StringBuilder sb = new StringBuilder();
+		for(int i=0; i < s.length(); i++) {
+			sb.append(toBinary(s.charAt(i)));
+		}
+		return sb.toString();
+	}
+	
+	private static String chuckNorrisEncodeFunction(String strToEncode) {
+		Stream<char> cStream = Arrays.stream(strToEncode);
+	}
+}

@@ -1,0 +1,167 @@
+package defibrilators.utils;
+
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import defibrilators.User;
+import defibrilators.Defibrilator;
+
+public class Utils {
+	
+    public static String loadFromFile(String filePath)throws IOException{
+          BufferedReader in = new BufferedReader(new FileReader(filePath));
+          StringBuilder sb = new StringBuilder();
+
+          String line = in.readLine();
+          while(line != null){
+              sb.append(line);
+              line = in.readLine();
+          }
+          return sb.toString();
+    }
+
+    
+    /* nope-cic
+    //Malo da se igramo sa regularnim izrazima
+    public static void parse(String data){
+        String regexFileBegin = "\\{";
+        String regexFileEnd = "\\}";
+        String regexArrBegin = "\\s*(?<arrName>\\w+)\\s*:\\s*\\["; //tehnicki nam ne treba ime niza, ali sto da ne
+        String regexArrEnd = "\\s*\\]";
+        String regexElemBegin = "\\s*\\{\\s*";
+        String regexElemEnd = "\\s+}(?:,|)\\s*";
+        String regexId = "\\s*id\\s*:\\s*(?<id>\\d+)\\s*(?:,|)\\s*";
+        String regexName = "\\s*name\\s*:\\s*\"(?<name>.*?)\"\\s*(?:,|)\\s*"; // mora biti reluctant
+        String regexAddress = "\\s*address\\s*:\\s*\"(?<address>.*?)\"\\s*(?:,|)\\s*";
+        String regexPhone = "\\s*phone\\s*:\\s*\"(?<phone>.*?)\"\\s*(?:,|)\\s*";
+        String regexLon = "\\s*lon\\s*:\\s*(?<lon>\\d*|\\d+\\.\\d+)\\s*(?:,|)\\s*";
+        String regexLat = "\\s*lat\\s*:\\s*(?<lat>(\\d*\\.\\d+|\\d+))\\s*(?:,\\s*|\\s*)";
+        String regexIgnore = ".*?";
+
+        String regexArrElements = regexFileBegin + regexIgnore + regexArrBegin + "(?<arrElems>.*)*?" + regexArrEnd + regexIgnore +regexFileEnd;
+
+
+        //Brace yourself for the megaRegex
+        String megaRegex = regexFileBegin + regexIgnore + regexArrBegin + "(?<arrElems>"+ regexElemBegin + "|" + regexId + "|" + regexName + "|" + regexAddress + "|" +
+               regexPhone + "|" + regexLon + "|" + regexLat + "|" + regexElemEnd +")*?" + regexArrEnd + regexIgnore +regexFileEnd;
+
+        Pattern pattern = Pattern.compile(megaRegex);
+        Matcher matcher = pattern.matcher(data);
+        //System.out.println(data);
+        while(matcher.find()){
+            //System.out.println("Got here");
+            System.out.println(matcher.group("lon"));
+        }
+    }
+   */
+
+    
+    public static void parse(String data){
+    	 String regexArrBegin = "\\s*(?<arrayName>\\w+)\\s*:\\s*\\["; 
+         String regexArrEnd = "\\s*\\]";
+         String regexData = "\\s*?(?<propertyName> \\w+?)\\s*?:\\s*?(?<propertyValue>(\"|)(\\s*?\\w+\\w*?(\\.|\\s*?|\\,)\\w+\\w*?\\s*?)+(\"|)|(\\s*\"\\s*\"\\s*))\\s*?(?:,|)\\s*?"; 
+         
+         String regex = regexArrBegin + ".*?" + regexArrEnd; // Izdvojimo niz
+         
+         Pattern pattern = Pattern.compile(regex);
+         Matcher matcher = pattern.matcher(data);
+         
+         ArrayList<Defibrilator> defebs  = new ArrayList<>();
+         
+         while(matcher.find()){
+        	 String arrayName = matcher.group("arrayName").trim();
+             String arrayData = matcher.group();
+             
+             System.out.println("Array data: \n\n\n" + arrayData + "\n\n\n\n");
+             
+             if(arrayName.equalsIgnoreCase("defibrillators")) {
+            	 pattern = Pattern.compile(regexData);
+            	 matcher = pattern.matcher(arrayData);
+            	 
+            	 Defibrilator tmp = new Defibrilator();
+            	 
+            	 while(matcher.find()) {
+            		 String propertyName = matcher.group("propertyName").trim();
+            		 String propertyValue = matcher.group("propertyValue");
+            		 
+            		 System.out.println(propertyName + ": \n       " + propertyValue);
+            		 
+            		 switch(propertyName) {
+            		 	case "name":
+            		 		tmp.setName(propertyValue);
+            		 		break;
+            		 	case "address":
+            		 		tmp.setAddress(propertyValue);
+            		 		break;
+            		 	case "phone":
+            		 		tmp.setPhone(propertyValue);
+            		 		break;
+            		 	case "lon":
+            		 		tmp.setLon(Double.parseDouble(propertyValue.trim()));
+            		 		break;
+            		 	case "lat":
+            		 		tmp.setLon(Double.parseDouble(propertyValue.trim()));
+            		 		break;
+            		 	default:
+            		 		System.err.println("Unknown data ;" + propertyName + ": " + propertyValue);
+            		 }
+            		 
+            		 System.out.println(tmp.checkCompleteness()?"\n--------\n Data complete \n--------\n":"\n--------\n Data incomplete \n--------\n");
+            	 }
+             }
+         }
+    	
+    }
+    
+    public static User extractUserData(String data) {
+    	 String regex = "\\s*?(?<propertyName> \\w+?)\\s*?:\\s*?(?<propertyValue>(\"|)(\\s*?\\w+\\w*?(\\.|\\s*?|\\,)\\w+\\w*?\\s*?)+(\"|)|(\\s*\"\\s*\"\\s*))\\s*?(?:,|)\\s*?";
+         
+         Pattern pattern = Pattern.compile(regex);
+         Matcher matcher = pattern.matcher(data);
+         
+         User us = new User();
+         
+         int countOfMatches = 0;
+         
+         while(matcher.find()){
+             String propertyName = (matcher.group("propertyName")).trim();
+             String propertyValue = (matcher.group("propertyValue")).trim();
+             
+             countOfMatches++;
+             
+             if(propertyName.equalsIgnoreCase("lon"))
+            	 us.setLon(Double.parseDouble(propertyValue));
+             
+            	 
+             if(propertyName.equalsIgnoreCase("lat"))
+            	 us.setLat(Double.parseDouble(propertyValue));
+             
+             if(us.checkCompleteness() && countOfMatches <= 2) 
+            	 return us;
+             
+             if(countOfMatches > 2)
+            	 break;
+         }
+    	
+    	return null;
+    }
+    
+    
+    public static String input(BufferedReader in, String message, String defaultValue)throws IOException{
+        System.out.println(message);
+        if(!defaultValue.equals("") || defaultValue == null){
+            System.out.println("ENTER for ["+ defaultValue + "]");
+            String line = in.readLine();
+            if(!line.equals(""))
+                return line;
+            else
+                return defaultValue;
+        }
+        return in.readLine();
+    }
+}

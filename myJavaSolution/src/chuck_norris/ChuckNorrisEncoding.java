@@ -90,7 +90,7 @@ public class ChuckNorrisEncoding {
 			
 			if(curr != succ || i == (binaryForm.length() - 1)) { //ako current != successor ili ako smo stigli do kraja
 				for(int k=0; k < count; k++) { 
-					sb.append('0'); //dodajemo broj ponavljanja 0 ili 1
+					sb.append("0"); //dodajemo broj ponavljanja 0 ili 1
 				}
 				sb.append(" ");
 				count = 0;

@@ -9,9 +9,6 @@ import java.nio.charset.Charset;
 public class ChuckNorrisEncoding {
 	public static void main(String[] args) {
 		try(BufferedReader in = new BufferedReader(new InputStreamReader(System.in))){
-			System.out.println("Tests: ");
-			System.out.println(toBinary('R'));
-			System.out.println(stringToBinary("R"));
 			
 			String input = input(in);
 			System.out.println("Binary form: " + stringToBinary(input));
@@ -31,7 +28,7 @@ public class ChuckNorrisEncoding {
 	
 	
 	private static String input(BufferedReader in)throws IOException{
-		System.out.println("Eneter desired word: \n  >>");
+	    System.out.println("Eneter desired word: \n  >>");
 	    String input = in.readLine();
 	    while(!isASCII(input)) {
 	    	System.err.println("Please use ASCII characters!\n  >>");

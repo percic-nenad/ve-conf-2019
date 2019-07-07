@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
-
 public class ChuckNorrisEncoding {
 	public static void main(String[] args) {
 		try(BufferedReader in = new BufferedReader(new InputStreamReader(System.in))){
@@ -50,7 +49,6 @@ public class ChuckNorrisEncoding {
 	}
 	
 	private static String chuckNorrisEncodeFunction(String strToEncode) {
-		
 		if(strToEncode == null)
 			throw new IllegalArgumentException("String cannot be null!");
 		if(strToEncode.equals(""))

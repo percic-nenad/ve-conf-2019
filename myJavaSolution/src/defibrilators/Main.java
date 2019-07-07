@@ -12,6 +12,7 @@ public class Main{
             String data = Utils.loadFromFile(filePath);
             
             User u = Utils.extractUserData(data);
+            
             List<Defibrilator> defebs = Utils.parse(data);
             
             System.out.println(Utils.getNearestDefibrilator(u, defebs));

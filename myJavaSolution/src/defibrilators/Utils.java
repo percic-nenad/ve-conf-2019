@@ -1,13 +1,18 @@
 package defibrilators;
 
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import defibrilators.Defibrilator;
 import defibrilators.User;
@@ -27,7 +32,14 @@ public class Utils {
         return in.readLine();
     }
 	
+    public static String loadFromFileAlt(String filePath)throws IOException{
+	Stream<String> fileStream = Files.lines(Paths.get(filePath));
+	String res = fileStream.collect(Collectors.joining());
+	fileStream.close();
 	
+	return res;
+    }
+		
     public static String loadFromFile(String filePath)throws IOException{
           BufferedReader in = new BufferedReader(new FileReader(filePath));
           StringBuilder sb = new StringBuilder();
@@ -40,8 +52,20 @@ public class Utils {
           
           in.close();
           return sb.toString();
+     }
+	
+    private static String loadFromURL(URL url) throws IOException {
+	try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
+		StringBuilder sb = new StringBuilder();
+		String line = in.readLine();
+		while (line != null) {
+			sb.append(line);
+			line = in.readLine();
+		}
+		return sb.toString();
+	}
     }
-    
+	
     public static List<Defibrilator> parse(String data){
     	 String regexArrBegin = "\\s*(?<arrayName>\\w+)\\s*:\\s*\\["; 
          String regexArrEnd = "\\s*\\]";

@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.Optional;
 
 import defibrilators.Defibrilator;
 import defibrilators.User;
@@ -173,9 +174,9 @@ public class Utils {
      * In this formula, the latitudes and longitudes are expressed in radians.
      * The number `6371` corresponds to the radius of the Earth in km
      */
-    
+    	
     public static Defibrilator getNearestDefibrilator(User user, List<Defibrilator> defibrilatos) {
-    	Defibrilator res = defibrilatos.stream()
+    	Optional<Defibrilator> res = defibrilatos.stream()
     						.sorted((a, b) ->{
     							//Distance to defb. a
     							double xa = (user.getLon() - a.getLon()) * Math.cos((a.getLat() + user.getLat())/2);
@@ -189,9 +190,12 @@ public class Utils {
     					
     							return Double.compare(distanceToDefA, distanceToDefB);
     							
-    						}).findFirst().get();
-    	
-    	return res;
+    						}).findFirst();
+	    
+    	if(res.isPresent())
+    		return res.get();
+ 
+    	return null;
     }
     
 }

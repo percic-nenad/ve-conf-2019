@@ -21,7 +21,7 @@ public class Utils {
 	
     public static String input(BufferedReader in, String message, String defaultValue)throws IOException{
         System.out.println(message);
-        if(!defaultValue.equals("") || defaultValue == null){
+        if(!defaultValue.equals("") || defaultValue != null){
             System.out.println("ENTER for ["+ defaultValue + "]");
             String line = in.readLine();
             if(!line.equals(""))
@@ -79,7 +79,7 @@ public class Utils {
          List<Defibrilator> defebs  = new ArrayList<>();
          
          while(matcher.find()){
-        	 String arrayName = matcher.group("arrayName").trim();
+             String arrayName = matcher.group("arrayName").trim();
              String arrayData = matcher.group();
              
              if(arrayName.equalsIgnoreCase("defibrillators")) {
